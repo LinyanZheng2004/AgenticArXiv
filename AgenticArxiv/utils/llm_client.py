@@ -36,10 +36,13 @@ class LLMClient:
         payload: Dict[str, Any] = {
             "model": model,
             "messages": messages,
-            "temperature": temperature,
             "max_tokens": max_tokens,
             "stream": stream,
         }
+        # Kimi models use fixed sampling temperatures; passing a custom value
+        # (the agent currently uses 0.1) is rejected by the K2.6 API.
+        if not model.lower().startswith("kimi-"):
+            payload["temperature"] = temperature
         if extra:
             payload.update(extra)
 
